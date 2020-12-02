@@ -1,19 +1,25 @@
 package edu.cs371m.hellofriend
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
+// From FC9_GoogleMaps
 class MainActivity
     : AppCompatActivity(),
     OnMapReadyCallback
@@ -22,10 +28,16 @@ class MainActivity
     private lateinit var geocoder: Geocoder
     private val LOCATION_REQUEST_CODE = 101
     private var locationPermissionGranted = false
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //setSupportActionBar(toolbar)
+
+        val authInitIntent = Intent(this, AuthInitActivity::class.java)
+        startActivity(authInitIntent)
+
 
         checkGooglePlayServices()
         val mapFragment = supportFragmentManager
@@ -92,5 +104,9 @@ class MainActivity
             }
         }
     }
+
+
+
+
 }
 

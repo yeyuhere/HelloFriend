@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "715751040049",
+    "firebase_url": "https://hellofriend-81f2a.firebaseio.com",
+    "project_id": "hellofriend-81f2a",
+    "storage_bucket": "hellofriend-81f2a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715751040049:android:51eca8c0bf6df9d3312110",
+        "android_client_info": {
+          "package_name": "edu.cs371m.hellofriend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715751040049-vsnvj5tlc2u48fjkk4d57rg6hque6lmf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZrPMr-LFGdmUHSGjnxdHNuOIjR-uD0MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715751040049-vsnvj5tlc2u48fjkk4d57rg6hque6lmf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
