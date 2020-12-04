@@ -2,8 +2,8 @@
 <resources>
     <string-array name="hour">
         <item>Hour</item>
-        <item>08</item>
-        <item>09</item>
+        <item>8</item>
+        <item>9</item>
         <item>10</item>
         <item>11</item>
         <item>12</item>

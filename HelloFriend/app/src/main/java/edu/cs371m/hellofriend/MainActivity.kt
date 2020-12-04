@@ -7,15 +7,12 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
-import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.*
@@ -23,13 +20,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentTransaction
 import kotlinx.android.synthetic.main.content_main.*
 
 // From FC9_GoogleMaps
 class MainActivity
     : AppCompatActivity(),
     OnMapReadyCallback
-//    View.OnClickListener
 {
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
@@ -44,6 +41,7 @@ class MainActivity
     private lateinit var location: String
     private lateinit var marker: String
     val viewModel: MainViewModel by viewModels()
+    private lateinit var homeFragment: HomeFragment
 
     private val ages: Array<String> by lazy {
         resources.getStringArray(R.array.age)
@@ -73,12 +71,6 @@ class MainActivity
         mapFragment.getMapAsync(this)
 
         geocoder = Geocoder(applicationContext)
-
-//        val ageSpinner: Spinner = findViewById(R.id.ageSpinner)
-//        val timeFromHourSpinner: Spinner = findViewById(R.id.timeFromHourSpinner)
-//        val timeFromMinSpinner: Spinner = findViewById(R.id.timeFromMinSpinner)
-//        val timeToHourSpinner: Spinner = findViewById(R.id.timeToHourSpinner)
-//        val timeToMinSpinner: Spinner = findViewById(R.id.timeToMinSpinner)
 
         val ageAdapter = ArrayAdapter.createFromResource(this,
             R.array.age,
@@ -110,86 +102,23 @@ class MainActivity
         timeToMinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         timeToMinSpinner.adapter = timeToMinAdapter
 
-
-//        timeFromHourSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                fromH = hour[p2]
-//                Toast.makeText(this@MainActivity, fromH, Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                Toast.makeText(this@MainActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        timeFromMinSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                fromM = minute[p2]
-//                Toast.makeText(this@MainActivity, fromM, Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                Toast.makeText(this@MainActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        timeToHourSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                toH = hour[p2]
-//                Toast.makeText(this@MainActivity, toH, Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                Toast.makeText(this@MainActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        timeToMinSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                toM = hour[p2]
-//                Toast.makeText(this@MainActivity, toM, Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                Toast.makeText(this@MainActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        ageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-//                ageString = ages[p2]
-//                Toast.makeText(this@MainActivity, ageString, Toast.LENGTH_SHORT).show()
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                Toast.makeText(this@MainActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//        if (ageString != null && fromH != null && fromM != null && toH != null && toM != null)
-//            marker = ageString + "yr: " + fromH + ":" + fromM + " - " + toH + ":" + toM
-
-//        val locationET: EditText = findViewById(R.id.locationET)
         locationET.setOnEditorActionListener { _, actionId, event ->
             if ((event != null
                             &&(event.action == KeyEvent.ACTION_DOWN)
                             &&(event.keyCode == KeyEvent.KEYCODE_ENTER))
                     || (actionId == EditorInfo.IME_ACTION_DONE)) {
                 hideKeyboard()
-                var latLng = geocoder.getFromLocationName(locationET.text.toString(), 1)
-                Log.d("xxx", "ETtext: ${locationET.text}; latLng: $latLng")
-                if (!latLng.isNullOrEmpty()) {
-                    Log.d("xxx", "${latLng[0].latitude}")
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 15.0f))
-                    map.addMarker(MarkerOptions().position(LatLng(latLng[0].latitude, latLng[0].longitude)).title(marker))
-                    Log.d("xxx", "fistmarker$marker")
-                }
-                locationET.clearComposingText()
             }
             false
         }
 
         initSaveScheduleBut()
+
+        homeFragment = HomeFragment.newInstance()
+
+        initReturnBut()
     }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
@@ -203,9 +132,6 @@ class MainActivity
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(30.2843, -97.7412), 15.0f))
     }
 
-//    private fun setSpinner(spinner: Spinner, array: Array<String>, item: String) {
-//
-//    }
 
     private fun checkGooglePlayServices() {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
@@ -262,23 +188,6 @@ class MainActivity
         imm.hideSoftInputFromWindow(window.decorView.rootView.windowToken, 0);
     }
 
-//    override fun onClick(v: View) {
-//        val ageSpinner: Spinner = findViewById(R.id.ageSpinner)
-//        val timeFromHourSpinner: Spinner = findViewById(R.id.timeFromHourSpinner)
-//        val timeFromMinSpinner: Spinner = findViewById(R.id.timeFromMinSpinner)
-//        val timeToHourSpinner: Spinner = findViewById(R.id.timeToHourSpinner)
-//        val timeToMinSpinner: Spinner = findViewById(R.id.timeToMinSpinner)
-//        val agePose = ageSpinner.selectedItemPosition
-//        val fromHourPos = timeFromHourSpinner.selectedItemPosition
-//        val fromMinPos = timeFromMinSpinner.selectedItemPosition
-//        val toHourPos = timeToHourSpinner.selectedItemPosition
-//        val toMinPos = timeToMinSpinner.selectedItemPosition
-//        Log.d("xxx", "toMinPos: $toMinPos")
-//        if (agePose != 0 && fromHourPos != 0 && fromMinPos != 0 && toHourPos != 0 && toMinPos != 0) {
-//            marker = age[agePose] + "yr: " + hour[fromHourPos] + ":" + minute[fromMinPos] + " - " + hour[toHourPos] + ":" + minute[toMinPos]
-//            Log.d("xxx", "$marker")
-//        }
-//    }
 
     private fun initSaveScheduleBut() {
         saveSchedule.setOnClickListener {
@@ -300,11 +209,18 @@ class MainActivity
                         toM = minute[toMPos]
                     }
                     viewModel.saveSchedule(schedule)
-                    marker = ages[agePos] + "yr: " + hour[fromHPos] + ":" + minute[fromMPos] + " - " + hour[toHPos] + ":" + minute[toMPos]
+                    marker = ages[agePos] + "YO: " + hour[fromHPos] + ":" + minute[fromMPos] + " - " + hour[toHPos] + ":" + minute[toMPos]
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 15.0f))
                     map.addMarker(MarkerOptions().position(LatLng(latLng[0].latitude, latLng[0].longitude)).title(marker))
-                    //clear locationET
+                    //clear content
                     locationET.text = null
+                    ageSpinner.setSelection(0)
+                    timeFromHourSpinner.setSelection(0)
+                    timeFromMinSpinner.setSelection(0)
+                    timeToHourSpinner.setSelection(0)
+                    timeToMinSpinner.setSelection(0)
+
+                    hideKeyboard()
 
                 } else {
                     Toast.makeText(this, "Location does not exist", Toast.LENGTH_SHORT).show()
@@ -312,6 +228,16 @@ class MainActivity
             } else {
                 Toast.makeText(this, "Please fill in all the required information", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun initReturnBut() {
+        returnBut.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.main_frame, homeFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit()
         }
     }
 }
