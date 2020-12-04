@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="minute">
-        <item>Minute</item>
+        <item>Min</item>
         <item>00</item>
         <item>01</item>
         <item>02</item>
