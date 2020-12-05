@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -112,6 +114,11 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
         initSaveScheduleBut()
         homeFragment = HomeFragment.newInstance()
         initReturnBut()
+
+//        (activity as AppCompatActivity).onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+////            (activity as AppCompatActivity).supportFragmentManager.popBackStack()
+//            returnBut.callOnClick()
+//        }
 
     }
 

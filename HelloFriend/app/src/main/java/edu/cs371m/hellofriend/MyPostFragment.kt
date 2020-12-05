@@ -5,7 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,6 +51,16 @@ class MyPostFragment: Fragment() {
             Log.d("xxx", "${currentUser?.uid} name: ${currentUser?.displayName}")
             adapter.setPostList(it.toMutableList())
         })
+        signOut.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+        }
+//        (activity as AppCompatActivity).onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+//            parentFragmentManager
+//                .beginTransaction()
+//                .replace(R.id.main_fragment, HomeFragment.newInstance())
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+//                .commit()
+//        }
     }
 
 

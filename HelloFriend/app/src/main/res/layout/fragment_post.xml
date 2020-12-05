@@ -10,7 +10,7 @@
         android:id="@+id/helloUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="testtesttest"
+        android:text=""
         android:textStyle="bold"
         android:textSize="25sp"/>
 
@@ -19,5 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
+    <Button
+        android:layout_marginTop="30dp"
+        android:id="@+id/signOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Out"/>
 
 </LinearLayout>

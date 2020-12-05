@@ -77,6 +77,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     fun getMySchedule(currentUser: FirebaseUser?) {
         if (currentUser == null) {
             Toast.makeText(appContext, "Please sign in first", Toast.LENGTH_SHORT).show()
+            mySchedules.postValue(null)
         } else {
             db.collection("globalSchedule")
                 .whereEqualTo("ownerUid", currentUser.uid)

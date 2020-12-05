@@ -58,8 +58,6 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState)
         scheduleFragment = ScheduleFragment.newInstance()
 
-        checkGooglePlayServices()
-        //
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.home_mapFrag) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -105,21 +103,6 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
                 map.addMarker(MarkerOptions().position(LatLng(it.latitude!!, it.longitude!!)).title(marker))
             }
         })
-    }
-
-    private fun checkGooglePlayServices() {
-        val googleApiAvailability = GoogleApiAvailability.getInstance()
-        val resultCode =
-            googleApiAvailability.isGooglePlayServicesAvailable(requireContext())
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (googleApiAvailability.isUserResolvableError(resultCode)) {
-                googleApiAvailability.getErrorDialog(requireActivity(), resultCode, 257).show()
-            } else {
-                Log.i(javaClass.simpleName,
-                    "This device must install Google Play Services.")
-                activity?.finish()
-            }
-        }
     }
 
     private fun requestPermission(requestCode: Int) {
