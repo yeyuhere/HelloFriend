@@ -1,6 +1,5 @@
 package edu.cs371m.hellofriend
 
-import android.app.Application
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.KeyEvent
@@ -8,11 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -22,7 +18,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_schedule.*
 
 class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback {
@@ -104,15 +99,13 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
                         &&(event.action == KeyEvent.ACTION_DOWN)
                         &&(event.keyCode == KeyEvent.KEYCODE_ENTER))
                 || (actionId == EditorInfo.IME_ACTION_DONE)) {
-//                hideKeyboard()
+                (activity as MainActivity).hideKeyboard()
             }
             false
         }
 
         initSaveScheduleBut()
-
         homeFragment = HomeFragment.newInstance()
-
         initReturnBut()
 
     }
@@ -121,12 +114,6 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-//        requestPermission(LOCATION_REQUEST_CODE)
-//        if (locationPermissionGranted) {
-//            // XXX Write me.
-//            map.isMyLocationEnabled = true
-//            map.uiSettings.isMyLocationButtonEnabled = true
-//        }
         // Start the map at the Harry Ransom center
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(30.2843, -97.7412), 15.0f))
     }
@@ -139,12 +126,13 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
             var fromMPos = timeFromMinSpinner.selectedItemPosition
             var toHPos = timeToHourSpinner.selectedItemPosition
             var toMPos = timeToMinSpinner.selectedItemPosition
-            var latLng = geocoder.getFromLocationName(locationET.text.toString(), 1)
+            var latLngOri = geocoder.getFromLocationName(locationET.text.toString(), 1)
 
             if (locationET.text.isNotEmpty() && agePos != 0 && fromHPos != 0 && fromMPos != 0 && toHPos != 0 && toMPos != 0) {
-                if (!latLng.isNullOrEmpty()) {
+                if (!latLngOri.isNullOrEmpty()) {
                     val schedule = Schedule().apply {
-                        location = locationET.text.toString()
+                        latitude = latLngOri[0].latitude
+                        longitude = latLngOri[0].longitude
                         age = ages[agePos]
                         fromH = hour[fromHPos]
                         fromM = minute[fromMPos]
@@ -153,8 +141,8 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
                     }
                     viewModel.saveSchedule(schedule)
                     marker = ages[agePos] + "YO: " + hour[fromHPos] + ":" + minute[fromMPos] + " - " + hour[toHPos] + ":" + minute[toMPos]
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 15.0f))
-                    map.addMarker(MarkerOptions().position(LatLng(latLng[0].latitude, latLng[0].longitude)).title(marker))
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLngOri[0].latitude, latLngOri[0].longitude), 15.0f))
+                    map.addMarker(MarkerOptions().position(LatLng(latLngOri[0].latitude, latLngOri[0].longitude)).title(marker))
                     //clear content
                     locationET.text = null
                     ageSpinner.setSelection(0)
@@ -163,7 +151,7 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
                     timeToHourSpinner.setSelection(0)
                     timeToMinSpinner.setSelection(0)
 
-//                    hideKeyboard()
+                    (activity as MainActivity).hideKeyboard()
 
                 } else {
                     Toast.makeText(requireContext(), "Location does not exist", Toast.LENGTH_SHORT).show()

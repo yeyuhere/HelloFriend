@@ -1,7 +1,6 @@
 package edu.cs371m.hellofriend
 
 import android.app.Application
-import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -13,7 +12,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var schedules = MutableLiveData<List<Schedule>>()
 
-    fun observeSchedule(): LiveData<List<Schedule>> {
+    fun observeSchedules(): LiveData<List<Schedule>> {
         return schedules
     }
 
@@ -22,7 +21,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
             "HomeViewModel",
             String.format(
                 "saveSchedule location(%s) age(%s)",
-                schedule.location,
+                schedule.scheduleID,
                 schedule.age
             )
         )
@@ -31,11 +30,11 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
                 .document(schedule.scheduleID)
                 .set(schedule)
                 .addOnSuccessListener {
-                    Log.d("xxx", "Schedule create \"${schedule.location}\" id: ${schedule.scheduleID}")
+                    Log.d("xxx", "Schedule create id: ${schedule.scheduleID}")
                     getSchedule()
                 }
                 .addOnFailureListener { e ->
-                    Log.d("xxx", "Schedule create FAILED \"${schedule.location}\"")
+                    Log.d("xxx", "Schedule create FAILED \"${schedule.scheduleID}\"")
                     Log.w("xxx", "Error", e)
                 }
     }
@@ -43,11 +42,11 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     fun deleteSchedule(schedule: Schedule) {
         db.collection("globalSchedule").document(schedule.scheduleID).delete()
                 .addOnSuccessListener {
-                    Log.d("xxx", "Note delete \"${schedule.location}\" id: ${schedule.scheduleID}")
+                    Log.d("xxx", "Note delete, id: ${schedule.scheduleID}")
                     getSchedule()
                 }
                 .addOnFailureListener { e ->
-                    Log.d("xxx", "Note delete FAILED \"${schedule.location}\"")
+                    Log.d("xxx", "Note delete FAILED \"${schedule.scheduleID}\"")
                     Log.w("xxx", "Error", e)
                 }
     }
@@ -62,18 +61,9 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
                         return@addSnapshotListener
                     }
                     Log.d("xxx", "fetch ${querySnapshot!!.documents.size}")
-//                    schedules.postValue(querySnapshot.documents.mapNotNull {
-//                        it.toObject(Schedule::class.java)
-//                    })
+                    schedules.postValue(querySnapshot.documents.mapNotNull {
+                        it.toObject(Schedule::class.java)
+                    })
                 }
     }
-
-
-
-
-
-
-
-
-
 }

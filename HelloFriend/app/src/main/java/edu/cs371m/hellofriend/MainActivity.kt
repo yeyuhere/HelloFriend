@@ -14,6 +14,13 @@ class MainActivity
 //    val viewModel: MainViewModel by viewModels()
     private lateinit var homeFragment: HomeFragment
 
+    // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
+    // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
+    fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(window.decorView.rootView.windowToken, 0);
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,21 +33,12 @@ class MainActivity
         initHomeFragment()
     }
 
-
-    // https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
-    // https://stackoverflow.com/questions/7789514/how-to-get-activitys-windowtoken-without-view
-    fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(window.decorView.rootView.windowToken, 0);
-    }
-
     private fun initHomeFragment() {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.main_fragment, homeFragment)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()
-
     }
 }
 

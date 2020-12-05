@@ -5,15 +5,18 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,8 +24,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlin.concurrent.fixedRateTimer
+import kotlinx.android.synthetic.main.fragment_schedule.*
 
 class HomeFragment: Fragment(), OnMapReadyCallback {
     private val viewModel : MainViewModel by activityViewModels()
@@ -58,8 +62,13 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         geocoder = Geocoder(requireContext())
-
         initCountInBut()
+        initSearchET()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getSchedule()
     }
 
     private fun initCountInBut() {
@@ -84,6 +93,13 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         }
         // Start the map at the Harry Ransom center
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(30.2843, -97.7412), 15.0f))
+
+        viewModel.observeSchedules().observe(viewLifecycleOwner, Observer {
+            it.forEach{
+                var marker = it.age + "YO: " + it.fromH + ":" + it.fromM + " - " + it.toH + ":" + it.toM
+                map.addMarker(MarkerOptions().position(LatLng(it.latitude!!, it.longitude!!)).title(marker))
+            }
+        })
     }
 
 
@@ -97,7 +113,7 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
             } else {
                 Log.i(javaClass.simpleName,
                     "This device must install Google Play Services.")
-//                finish()
+                activity?.finish()
             }
         }
     }
@@ -134,5 +150,23 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
             }
         }
     }
+
+    private fun initSearchET() {
+        searchET.setOnEditorActionListener { _, actionId, event ->
+            if ((event != null
+                        &&(event.action == KeyEvent.ACTION_DOWN)
+                        &&(event.keyCode == KeyEvent.KEYCODE_ENTER))
+                || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                (activity as MainActivity).hideKeyboard()
+                var latLng = geocoder.getFromLocationName(searchET.text.toString(), 1)
+                if (!latLng.isNullOrEmpty()) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 15.0f))
+                }
+                searchET.text = null
+            }
+            false
+        }
+    }
+
 
 }
