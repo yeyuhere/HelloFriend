@@ -6,6 +6,13 @@
     android:orientation="vertical"
     android:background="#FFFFFFFF"
     >
+    <TextView
+        android:id="@+id/helloUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="testtesttest"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

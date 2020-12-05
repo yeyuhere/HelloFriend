@@ -67,6 +67,8 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         geocoder = Geocoder(requireContext())
         initCountInBut()
         initSearchET()
+        initMyPostBut()
+
     }
 
     override fun onResume() {
@@ -174,7 +176,7 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         myPostBut.setOnClickListener {
             fragmentManager
                 ?.beginTransaction()
-                ?.replace(R.id.main_fragment, scheduleFragment)
+                ?.replace(R.id.main_fragment, MyPostFragment.newInstance())
                 ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 ?.commit()
         }

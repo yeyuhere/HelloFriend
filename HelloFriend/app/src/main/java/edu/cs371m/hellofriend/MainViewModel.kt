@@ -80,7 +80,6 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         } else {
             db.collection("globalSchedule")
                 .whereEqualTo("ownerUid", currentUser.uid)
-                .orderBy("timeStamp")
                 .limit(100)
                 .addSnapshotListener { querySnapshot, ex ->
                     if (ex != null) {
