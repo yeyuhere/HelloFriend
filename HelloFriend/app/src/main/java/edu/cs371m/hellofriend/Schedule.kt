@@ -12,6 +12,7 @@ class Schedule {
     var fromM: String? = null
     var toH: String? = null
     var toM: String? = null
+    var ownerUid: String? = null
     @ServerTimestamp val timeStamp: Timestamp? = null
     var scheduleID = ""
 }

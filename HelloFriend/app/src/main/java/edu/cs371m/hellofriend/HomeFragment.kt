@@ -25,6 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_schedule.*
 
@@ -35,6 +37,7 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
     private lateinit var geocoder: Geocoder
     private val LOCATION_REQUEST_CODE = 101
     private var locationPermissionGranted = false
+    private var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     companion object {
         fun newInstance(): HomeFragment {
@@ -102,7 +105,6 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         })
     }
 
-
     private fun checkGooglePlayServices() {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val resultCode =
@@ -160,11 +162,21 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
                 (activity as MainActivity).hideKeyboard()
                 var latLng = geocoder.getFromLocationName(searchET.text.toString(), 1)
                 if (!latLng.isNullOrEmpty()) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 15.0f))
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latLng[0].latitude, latLng[0].longitude), 18.0f))
                 }
                 searchET.text = null
             }
             false
+        }
+    }
+
+    private fun initMyPostBut() {
+        myPostBut.setOnClickListener {
+            fragmentManager
+                ?.beginTransaction()
+                ?.replace(R.id.main_fragment, scheduleFragment)
+                ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                ?.commit()
         }
     }
 

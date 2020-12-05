@@ -2,6 +2,7 @@ package edu.cs371m.hellofriend
 
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +13,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.fragment_schedule.*
 
 class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback {
@@ -26,6 +30,7 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
     private lateinit var geocoder: Geocoder
     private lateinit var marker: String
     private lateinit var homeFragment: HomeFragment
+    private var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     private val ages: Array<String> by lazy {
         resources.getStringArray(R.array.age)
@@ -130,6 +135,16 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
 
             if (locationET.text.isNotEmpty() && agePos != 0 && fromHPos != 0 && fromMPos != 0 && toHPos != 0 && toMPos != 0) {
                 if (!latLngOri.isNullOrEmpty()) {
+                    viewModel.observeSchedules().observe(viewLifecycleOwner, Observer {
+                        it.forEach {
+                            if (latLngOri[0].latitude == it.latitude && latLngOri[0].longitude == it.longitude) {
+                                Log.d("xxx", "same location")
+                                // https://stackoverflow.com/questions/20490654/more-than-one-marker-on-same-place-markerclusterer
+                                latLngOri[0].latitude += (Math.random() -.5) / 3000
+                                latLngOri[0].longitude += (Math.random() -.5) / 3000
+                            }
+                        }
+                    })
                     val schedule = Schedule().apply {
                         latitude = latLngOri[0].latitude
                         longitude = latLngOri[0].longitude
@@ -138,6 +153,7 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
                         fromM = minute[fromMPos]
                         toH = hour[toHPos]
                         toM = minute[toMPos]
+                        ownerUid = currentUser?.uid
                     }
                     viewModel.saveSchedule(schedule)
                     marker = ages[agePos] + "YO: " + hour[fromHPos] + ":" + minute[fromMPos] + " - " + hour[toHPos] + ":" + minute[toMPos]
