@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
@@ -47,22 +48,11 @@ class MyPostFragment: Fragment() {
         initAdapter(requireView())
         helloUser.text = "Hello, " + currentUser?.displayName + "!"
         viewModel.observeMySchedules().observe(viewLifecycleOwner, Observer {
-            Log.d("xxx", "myschedule size: ${it.size}")
-            Log.d("xxx", "${currentUser?.uid} name: ${currentUser?.displayName}")
             adapter.setPostList(it.toMutableList())
         })
         signOut.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
+            (activity as MainActivity).finishAffinity()
         }
-//        (activity as AppCompatActivity).onBackPressedDispatcher.addCallback(viewLifecycleOwner){
-//            parentFragmentManager
-//                .beginTransaction()
-//                .replace(R.id.main_fragment, HomeFragment.newInstance())
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-//                .commit()
-//        }
     }
-
-
-
 }

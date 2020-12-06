@@ -31,12 +31,8 @@ class MainActivity
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val authInitIntent = Intent(this, AuthInitActivity::class.java)
-        startActivity(authInitIntent)
-
-
         checkGooglePlayServices()
-
-
+        startActivity(authInitIntent)
         initHomeFragment()
     }
 

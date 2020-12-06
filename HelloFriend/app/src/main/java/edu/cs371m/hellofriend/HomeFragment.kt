@@ -78,7 +78,8 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
         countInBut.setOnClickListener {
             fragmentManager
                 ?.beginTransaction()
-                ?.replace(R.id.main_fragment, scheduleFragment)
+                ?.add(R.id.main_fragment, scheduleFragment)
+                ?.addToBackStack(null)
                 ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 ?.commit()
         }
@@ -158,10 +159,12 @@ class HomeFragment: Fragment(), OnMapReadyCallback {
     private fun initMyPostBut() {
         myPostBut.setOnClickListener {
             fragmentManager
-                ?.beginTransaction()
-                ?.replace(R.id.main_fragment, MyPostFragment.newInstance())
-                ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                ?.commit()
+                    ?.beginTransaction()
+                    ?.add(R.id.main_fragment, MyPostFragment.newInstance())
+                    ?.addToBackStack(null)
+                    ?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    ?.commit()
+
         }
     }
 

@@ -2,28 +2,38 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFFFF"
-    >
-    <TextView
-        android:id="@+id/helloUser"
+    android:background="#FFFFFFFF">
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_margin="8dp"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textStyle="bold"
-        android:textSize="25sp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp">
+        <TextView
+            android:id="@+id/helloUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:text=""
+            android:textStyle="bold"
+            android:textSize="25sp"/>
+        <Button
+            android:id="@+id/signOut"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Sign Out"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_margin="8dp"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
-    <Button
-        android:layout_marginTop="30dp"
-        android:id="@+id/signOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Out"/>
+
 
 </LinearLayout>

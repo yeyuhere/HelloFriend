@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,7 +25,7 @@
         <Button
             android:id="@+id/deleteImage"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.7"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_clear_black_24dp"/>
 

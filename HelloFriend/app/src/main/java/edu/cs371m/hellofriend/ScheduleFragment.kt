@@ -114,12 +114,6 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
         initSaveScheduleBut()
         homeFragment = HomeFragment.newInstance()
         initReturnBut()
-
-//        (activity as AppCompatActivity).onBackPressedDispatcher.addCallback(viewLifecycleOwner){
-////            (activity as AppCompatActivity).supportFragmentManager.popBackStack()
-//            returnBut.callOnClick()
-//        }
-
     }
 
 
@@ -187,11 +181,7 @@ class ScheduleFragment: Fragment(R.layout.fragment_schedule), OnMapReadyCallback
 
     private fun initReturnBut() {
         returnBut.setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment, homeFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
     }
 
