@@ -1,1 +1,2 @@
-
+This is a project for the Android Programming course. This app enables parents with kids under five years old to share play schedule information for the current day, so that they may have opportunities to meet new friends and play together.
+API used: Maps SDK for Android, Geocoding API (need to put your own API in the code to get the app into use)
